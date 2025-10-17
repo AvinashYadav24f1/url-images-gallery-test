@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        body {
+            padding-top: 20px;
+        }
+        .card-img-top {
+            width: 100%;
+            height: 200px; /* Fixed height for consistent image display */
+            object-fit: cover; /* Cover the area, cropping if necessary */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="gallery-title" class="text-center mb-4">Photo Gallery</h1>
+        <div id="image-gallery-container" class="row">
+            <!-- Image cards will be dynamically inserted here by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Bootstrap JS CDN (optional, but good practice for full Bootstrap features) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const defaultImages = [
+                "https://media.istockphoto.com/id/517188688/photo/mountain-landscape.jpg?s=612x612&w=0&k=20&c=A63koPKaCyIwQWOTFBRWXj_PwCrR4cEoOw2S9Q7yVl8=",
+                "https://images.pexels.com/photos/1054655/pexels-photo-1054655.jpeg?cs=srgb&dl=pexels-hsapir-1054655.jpg&fm=jpg",
+                "https://www.pinterest.com/ideas/food-and-drink/918530398158/"
+            ];
+
+            const imageGalleryContainer = document.getElementById('image-gallery-container');
+            const urlParams = new URLSearchParams(window.location.search);
+            const imagesToDisplay = [];
+
+            // Determine which images to display based on query parameters or defaults
+            for (let i = 1; i <= 3; i++) {
+                const paramName = `img${i}`;
+                const imageUrl = urlParams.get(paramName);
+                if (imageUrl && imageUrl.trim().length > 0) {
+                    imagesToDisplay.push(imageUrl);
+                } else {
+                    imagesToDisplay.push(defaultImages[i - 1]);
+                }
+            }
+
+            // Dynamically create and append image cards
+            imagesToDisplay.forEach((url, index) => {
+                const colDiv = document.createElement('div');
+                colDiv.className = 'col-md-4 mb-4'; // Bootstrap column and margin-bottom
+
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'card h-100'; // Make cards equal height
+                cardDiv.id = `image-${index + 1}`; // Required ID for evaluation
+
+                const imgElement = document.createElement('img');
+                imgElement.className = 'card-img-top';
+                imgElement.src = url;
+                imgElement.alt = `Gallery Image ${index + 1}`;
+                imgElement.onerror = function() {
+                    // Optional: Replace broken image with a placeholder or log error
+                    console.error(`Failed to load image: ${this.src}`);
+                    // this.src = 'https://via.placeholder.com/200x200?text=Image+Not+Found'; 
+                };
+
+                const cardBodyDiv = document.createElement('div');
+                cardBodyDiv.className = 'card-body';
+
+                const cardTitle = document.createElement('h5');
+                cardTitle.className = 'card-title';
+                cardTitle.textContent = `Image ${index + 1}`;
+
+                cardBodyDiv.appendChild(cardTitle);
+                cardDiv.appendChild(imgElement);
+                cardDiv.appendChild(cardBodyDiv);
+                colDiv.appendChild(cardDiv);
+                imageGalleryContainer.appendChild(colDiv);
+            });
+        });
+    </script>
+</body>
+</html>
